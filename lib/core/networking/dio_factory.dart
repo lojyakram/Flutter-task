@@ -1,14 +1,32 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:my_first_app/core/networking/api_constants.dart';
+import 'package:my_first_app/main.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 
 class DioFactory{
-  late Dio dio;
-  init(){
-    dio = Dio(BaseOptions(
-      baseUrl: '',
+ static late Dio _dio;
+  static getDio(){
+    Duration duration = Duration( seconds: 30);
+    _dio = Dio(BaseOptions(
+      baseUrl: ApiConstants.baseUrl,
+      receiveTimeout: duration,
+      connectTimeout: duration,
+      sendTimeout: duration,
+      headers: {
+        'Accept':'application/json',
+        'content-type':'application/json',
+
+      }
     ));
-    dio.interceptors.add(PrettyDioLogger(
+
+       _dio.interceptors.add(InterceptorsWrapper(
+         onRequest: (o,r){
+           o.headers['Authorization'] = 'Bearer $token';
+         },
+       ));
+
+    _dio.interceptors.add(PrettyDioLogger(
         requestHeader: true,
         requestBody: true,
         responseBody: true,
@@ -20,5 +38,6 @@ class DioFactory{
 
     )
     );
+    return _dio;
   }
 }

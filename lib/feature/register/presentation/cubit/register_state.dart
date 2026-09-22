@@ -1,6 +1,21 @@
-part of 'register_cubit.dart';
+enum Status{
+  initial,
+  loading,
+  success,
+  error
+}
 
-@immutable
-sealed class RegisterState{}
+class RegisterState{
+  final Status status;
+  final String? message;
 
-  final class RegisterInitial extends RegisterState{}
+  const RegisterState({required this.status, this.message});
+
+  RegisterState copyWith({Status? status, String? message}){
+    return RegisterState(
+        status: status??this.status,
+        message: message??this.message
+    );
+  }
+
+}
